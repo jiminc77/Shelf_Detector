@@ -1,0 +1,8 @@
+Ketword : retail object detection
+
+https://universe.roboflow.com/boxv4iyolov5pytorch/test-gwoka/browse?queryText=class%3Aitem&pageSize=50&startingIndex=0&browseQuery=true
+ : Empty, Item 모두 있는 Dataset
+ https://universe.roboflow.com/search?q=like:fyp-ormnr%2Fsupermarket-empty-shelf-detector
+ : 검색 Keyword
+ https://universe.roboflow.com/resoluteai-software-bxrc4/freezer_img3/images/Mx1XwtD4PXdYA9YsS2k9?queryText=class%3APrice&pageSize=50&startingIndex=0&browseQuery=true
+ : Price 인식 Dataset
