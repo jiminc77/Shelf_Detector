@@ -1,0 +1,6 @@
+train: ../Empty_Dataset/train/images
+val: ../Empty_Dataset/valid/images
+test: ../Empty_Dataset/test/images
+
+nc: 1  # number of classes
+names: ['empty']  # replace with your class names
