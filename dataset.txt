@@ -6,3 +6,7 @@ https://universe.roboflow.com/boxv4iyolov5pytorch/test-gwoka/browse?queryText=cl
  : 검색 Keyword
  https://universe.roboflow.com/resoluteai-software-bxrc4/freezer_img3/images/Mx1XwtD4PXdYA9YsS2k9?queryText=class%3APrice&pageSize=50&startingIndex=0&browseQuery=true
  : Price 인식 Dataset
+
+
+ EmptyDetect : Supermarket Empty Shelf Detector Computer Vision Project Dataset + RetailAnalysis Image Dataset
+ ItemDetect : SKU 110K Dataset
