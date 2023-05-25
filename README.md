@@ -1,6 +1,5 @@
 # Shelf_Detector
-Deep Learning Team 3
-
+> Folder Structure
 
 
     ├── Empty_Dataset
@@ -16,4 +15,4 @@ Deep Learning Team 3
     │   └── detect.py
     └── run.sh
 
-
+> Dataset
