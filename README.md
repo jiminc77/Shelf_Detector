@@ -1,7 +1,7 @@
 # Shelf_Detector
 Deep Learning Team 3
 
-''' bash
+
 
     ├── Empty_Dataset
     │   ├── train
@@ -15,5 +15,5 @@ Deep Learning Team 3
     │   ├── train.py
     │   └── detect.py
     └── run.sh
-    
-'''
+
+
