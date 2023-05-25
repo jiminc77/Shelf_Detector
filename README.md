@@ -2,7 +2,7 @@
 Deep Learning Team 3
 
 ''' bash
-    ├── Empty_Dataset
+    ├── Empty_Dataset /n
     │   ├── train
     │   ├── test
     │   └── valid
