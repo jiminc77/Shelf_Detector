@@ -1,0 +1,6 @@
+train: ../Item_Dataset/train/images
+val: ../Item_Dataset/valid/images
+test: ../Item_Dataset/test/images
+
+nc: 1  # number of classes
+names: ['Item']  # replace with your class names
