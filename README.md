@@ -36,6 +36,13 @@ After cloning, organize your folders as shown below
 <br/>
 
 > Train Method
+Install
+
+    git clone https://github.com/jiminc77/Shelf_Detector.git  # clone
+    cd yolov5
+    pip install -r requirements.txt  # install
+
+Trining
 
     python python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <data>.yaml --cfg yolov5x6.yaml --weights <pretrained model> --device <device>
     
