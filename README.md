@@ -34,7 +34,7 @@ After cloning, organize your folders as shown below.
 - Optimizer : SGD
 - Loss : Box Loss, Objectness Loss, Classification Loss
 
-    python python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <data>.yaml --cfg yolov5x6.yaml --weights <pretrained model> --device <device>
+        python python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <data>.yaml --cfg yolov5x6.yaml --weights <pretrained model> --device <device>
 
 > Train Result
 - Empty_Dataset
