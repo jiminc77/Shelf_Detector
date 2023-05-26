@@ -34,9 +34,7 @@ from utils.torch_utils import select_device, smart_inference_mode
 
 @smart_inference_mode()
 def run(
-        weights=ROOT / 'yolov5s.pt',  # model path or triton URL
         source=ROOT / 'data/images',  # file/dir/URL/glob/screen/0(webcam)
-        data=ROOT / 'data/coco128.yaml',  # dataset.yaml path
         imgsz=(640, 640),  # inference size (height, width)
         conf_thres=0.25,  # confidence threshold
         iou_thres=0.45,  # NMS IOU threshold
@@ -62,6 +60,19 @@ def run(
         dnn=False,  # use OpenCV DNN for ONNX inference
         vid_stride=1,  # video frame-rate stride
 ):
+
+    def bb_intersection_over_union(boxA, boxB):
+        xA = max(boxA[0], boxB[0])
+        yA = max(boxA[1], boxB[1])
+        xB = min(boxA[2], boxB[2])
+        yB = min(boxA[3], boxB[3])
+
+        interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
+        boxAArea = (boxA[2] - boxA[0] + 1) * (boxA[3] - boxA[1] + 1)
+        boxBArea = (boxB[2] - boxB[0] + 1) * (boxB[3] - boxB[1] + 1)
+        iou = interArea / float(boxAArea + boxBArea - interArea)
+        return iou
+
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
@@ -70,38 +81,42 @@ def run(
     screenshot = source.lower().startswith('screen')
     if is_url and is_file:
         source = check_file(source)  # download
-    print(weights)
-    if weights == ["Weights/EmptyDetect.pt"]:
-        save_dir = Path(os.path.join(project, 'EmptyDetect'))
-    else:
-        save_dir = Path(os.path.join(project, 'ItemDetect'))
-         
+    
+    save_dir = Path(project)
 
     # Load model
     device = select_device(device)
-    model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=half)
-    stride, names, pt = model.stride, model.names, model.pt
-    imgsz = check_img_size(imgsz, s=stride)  # check image size
+    model1 = DetectMultiBackend(["Weights/ItemDetect.pt"], device=device, dnn=dnn, data='ItemDetect.yaml', fp16=half)
+    model2 = DetectMultiBackend(["Weights/EmptyDetect_2.pt"], device=device, dnn=dnn, data='EmptyDetect.yaml', fp16=half)
+
+    assert model1.stride == model2.stride
+
+    stride = model1.stride
+    names_1, pt_1 = model1.names, model1.pt
+    names_2, pt_2 = model2.names, model2.pt
+    imgsz = check_img_size(imgsz, s=stride)
 
     # Dataloader
     bs = 1  # batch_size
     if webcam:
         view_img = check_imshow(warn=True)
-        dataset = LoadStreams(source, img_size=imgsz, stride=stride, auto=pt, vid_stride=vid_stride)
+        dataset = LoadStreams(source, img_size=imgsz, stride=stride, auto=pt_1, vid_stride=vid_stride)
         bs = len(dataset)
     elif screenshot:
-        dataset = LoadScreenshots(source, img_size=imgsz, stride=stride, auto=pt)
+        dataset = LoadScreenshots(source, img_size=imgsz, stride=stride, auto=pt_1)
     else:
-        dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt, vid_stride=vid_stride)
+        dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt_1, vid_stride=vid_stride)
     vid_path, vid_writer = [None] * bs, [None] * bs
 
     # Run inference
-    model.warmup(imgsz=(1 if pt or model.triton else bs, 3, *imgsz))  # warmup
+    model1.warmup(imgsz=(1 if pt_1 or model1.triton else bs, 3, *imgsz))  # warmup
+    model2.warmup(imgsz=(1 if pt_2 or model2.triton else bs, 3, *imgsz))  # warmup
+
     seen, windows, dt = 0, [], (Profile(), Profile(), Profile())
     for path, im, im0s, vid_cap, s in dataset:
         with dt[0]:
-            im = torch.from_numpy(im).to(model.device)
-            im = im.half() if model.fp16 else im.float()  # uint8 to fp16/32
+            im = torch.from_numpy(im).to(model1.device)
+            im = im.half() if model1.fp16 else im.float()  # uint8 to fp16/32
             im /= 255  # 0 - 255 to 0.0 - 1.0
             if len(im.shape) == 3:
                 im = im[None]  # expand for batch dim
@@ -109,14 +124,16 @@ def run(
         # Inference
         with dt[1]:
             visualize = increment_path(save_dir / Path(path).stem, mkdir=True) if visualize else False
-            pred = model(im, augment=augment, visualize=visualize)
+            pred1 = model1(im, augment=augment, visualize=visualize)
+            pred2 = model2(im, augment=augment, visualize=visualize)
 
         # NMS
         with dt[2]:
-            pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
+            pred1 = non_max_suppression(pred1, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
+            pred2 = non_max_suppression(pred2, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
 
         # Process predictions
-        for i, det in enumerate(pred):  # per image
+        for i, (det1, det2) in enumerate(zip(pred1, pred2)):  # per image
             seen += 1
             if webcam:  # batch_size >= 1
                 p, im0, frame = path[i], im0s[i].copy(), dataset.count
@@ -130,40 +147,65 @@ def run(
             s += '%gx%g ' % im.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
-            annotator = Annotator(im0, line_width=line_thickness, example=str(names))
-            if len(det):
+            annotator_1 = Annotator(im0, line_width=line_thickness, example=str(names_1))
+            annotator_2 = Annotator(im0, line_width=line_thickness, example=str(names_2))
+            if len(det1) and len(det2):
                 # Rescale boxes from img_size to im0 size
-                det[:, :4] = scale_boxes(im.shape[2:], det[:, :4], im0.shape).round()
+                det1[:, :4] = scale_boxes(im.shape[2:], det1[:, :4], im0.shape).round()
+                det2[:, :4] = scale_boxes(im.shape[2:], det2[:, :4], im0.shape).round()
 
                 # Print results
-                for c in det[:, 5].unique():
-                    n = (det[:, 5] == c).sum()  # detections per class
-                    s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+                for c in det1[:, 5].unique():
+                    n = (det1[:, 5] == c).sum()  # detections per class
+                    s += f"{n} {names_1[int(c)]}{'s' * (n > 1)}, "  # add to string for model1
+
+                for c in det2[:, 5].unique():
+                    n = (det2[:, 5] == c).sum()  # detections per class
+                    s += f"{n} {names_2[int(c)]}{'s' * (n > 1)}, "  # add to string for model2
+
+                # Remove overlapping boxes
+                for box1 in det1:
+                    for box2 in det2:
+                        ious = [bb_intersection_over_union(box1[:4], box2[:4]) for box1 in det1]
+                        mask = torch.tensor([iou <= 0 for iou in ious])
+                        det1 = det1[mask]
 
                 # Write results
-                for *xyxy, conf, cls in reversed(det):
-                    if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
-                        with open(f'{txt_path}.txt', 'a') as f:
-                            f.write(('%g ' * len(line)).rstrip() % line + '\n')
+                if det1.ndim >= 1 and det1.shape[1] >= 6:
+                    for *xyxy, conf, cls in reversed(det1):
+                        if save_txt:  # Write to file
+                            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                            line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+                            with open(f'{txt_path}.txt', 'a') as f:
+                                f.write(('%g ' * len(line)).rstrip() % line + '\n')
+                        if save_img or save_crop or view_img:  # Add bbox to image
+                            c = int(cls)  # integer class
+                            annotator_1.box_label(xyxy, '', color=(255, 0, 0))  # blue bbox for model1
+                        if save_crop:
+                            save_one_box(xyxy, imc, file=save_dir / 'crops' / names_1[c] / f'{p.stem}.jpg', BGR=True)
 
-                    if save_img or save_crop or view_img:  # Add bbox to image
-                        c = int(cls)  # integer class
-                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-                        annotator.box_label(xyxy, label, color=colors(c, True))
-                    if save_crop:
-                        save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+                if det2.ndim >= 1 and det2.shape[1] >= 6:
+                    for *xyxy, conf, cls in reversed(det2):
+                        if save_txt:  # Write to file
+                            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                            line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+                            with open(f'{txt_path}.txt', 'a') as f:
+                                f.write(('%g ' * len(line)).rstrip() % line + '\n')
+                        if save_img or save_crop or view_img:  # Add bbox to image
+                            c = int(cls)  # integer class
+                            annotator_2.box_label(xyxy, '', color=(0, 255, 0))  # green bbox for model2
+                        if save_crop:
+                            save_one_box(xyxy, imc, file=save_dir / 'crops' / names_2[c] / f'{p.stem}.jpg', BGR=True)
 
-            # Stream results
-            im0 = annotator.result()
-            if view_img:
-                if platform.system() == 'Linux' and p not in windows:
-                    windows.append(p)
-                    cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
-                    cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
-                cv2.imshow(str(p), im0)
-                cv2.waitKey(1)  # 1 millisecond
+            # # Stream results
+            # im0 = annotator.result()
+            # if view_img:
+            #     if platform.system() == 'Linux' and p not in windows:
+            #         windows.append(p)
+            #         cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
+            #         cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
+            #     cv2.imshow(str(p), im0)
+            #     cv2.waitKey(1)  # 1 millisecond
 
             # Save results (image with detections)
             if save_img:
@@ -185,7 +227,7 @@ def run(
                     vid_writer[i].write(im0)
 
         # Print time (inference-only)
-        LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
+        LOGGER.info(f"{s}{'' if len(det1) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
 
     # Print results
     t = tuple(x.t / seen * 1E3 for x in dt)  # speeds per image
@@ -193,15 +235,13 @@ def run(
     if save_txt or save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
-    if update:
-        strip_optimizer(weights[0])  # update model (to fix SourceChangeWarning)
+    # if update:
+    #     strip_optimizer(weights[0])  # update model (to fix SourceChangeWarning)
 
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'yolov5s.pt', help='model path or triton URL')
     parser.add_argument('--source', type=str, default=ROOT / 'Inputs', help='file/dir/URL/glob/screen/0(webcam)')
-    parser.add_argument('--data', type=str, default=ROOT / 'data/coco128.yaml', help='(optional) dataset.yaml path')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
