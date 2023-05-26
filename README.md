@@ -22,9 +22,11 @@ After cloning, organize your folders as shown below.
         ├── train.py
         └── detect.py
 
-<br/>
 
-[** File Download Here **](https://drive.google.com/drive/folders/1J3qiaXRBaDmvXN9wDjf3LoHP9t09bMfL?usp=sharing, "Dataset and pt File")
+
+[ File Download Here ](https://drive.google.com/drive/folders/1J3qiaXRBaDmvXN9wDjf3LoHP9t09bMfL?usp=sharing, "Dataset and pt File")
+
+<br/>
 
 > Dataset
 - Empty_Dataset : Supermarket Empty Shelf Detector Computer Vision Project Dataset(497) + RetailAnalysis Image Dataset(1042)
