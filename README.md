@@ -1,5 +1,6 @@
 # Shelf_Detector
-> Folder Structure
+> Folder Structure <br/>
+
 After cloning, organize your folders as shown below. 
 
     ├── Empty_Dataset
