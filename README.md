@@ -37,7 +37,6 @@ After cloning, organize your folders as shown below
 
 > Train Method
 
-<br/>
 Install
 
     git clone https://github.com/jiminc77/Shelf_Detector.git  # clone
