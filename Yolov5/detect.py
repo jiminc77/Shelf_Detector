@@ -87,7 +87,7 @@ def run(
     # Load model
     device = select_device(device)
     model1 = DetectMultiBackend(["Weights/ItemDetect.pt"], device=device, dnn=dnn, data='ItemDetect.yaml', fp16=half)
-    model2 = DetectMultiBackend(["Weights/EmptyDetect_2.pt"], device=device, dnn=dnn, data='EmptyDetect.yaml', fp16=half)
+    model2 = DetectMultiBackend(["Weights/EmptyDetect.pt"], device=device, dnn=dnn, data='EmptyDetect.yaml', fp16=half)
 
     assert model1.stride == model2.stride
 
@@ -243,7 +243,7 @@ def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=str, default=ROOT / 'Inputs', help='file/dir/URL/glob/screen/0(webcam)')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
-    parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')
+    parser.add_argument('--conf-thres', type=float, default=0.35, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
     parser.add_argument('--max-det', type=int, default=1000, help='maximum detections per image')
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')

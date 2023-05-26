@@ -58,7 +58,7 @@ Training
     ( Pretrained by yolov5x6 )
     | Dataset        | Precision    | Recall       | mAP<sup>val<br>50 | mAP<sup>val<br>95 |
     | :------------: | :----------: | :-----------:| :-----------:| :-----------:|
-    |  Empty_Dataset | 0.721        | 0.624        | 0.674        | 0.401        |
+    |  Empty_Dataset | 0.731        | 0.646        | 0.723        | 0.414        |
     |  Item_Dataset  | 0.942        | 0.894        | 0.933        | 0.75         |
 
 <br/>
