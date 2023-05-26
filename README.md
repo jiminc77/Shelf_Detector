@@ -48,7 +48,7 @@ After cloning, organize your folders as shown below
 - Empty_Dataset
 
     ( Pretrained by yolov5x6 )
-    | Dataset        | Precision    | Recall       | mAP 50       | mAP 95       |
+    | Dataset        | Precision    | Recall       | mAP<sup>val<br>50 | mAP<sup>val<br>95 |
     | :------------: | :----------: | :-----------:| :-----------:| :-----------:|
     |  Empty_Dataset | 0.721        | 0.624        | 0.674        | 0.401        |
     |  Item_Dataset  | 0.942        | 0.894        | 0.933        | 0.75         |
