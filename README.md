@@ -1,7 +1,7 @@
 # Shelf_Detector
 > Folder Structure <br/>
 
-After cloning, organize your folders as shown below. 
+After cloning, organize your folders as shown below
 
     ├── Empty_Dataset
     │   ├── train
