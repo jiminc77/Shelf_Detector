@@ -59,3 +59,6 @@ After cloning, organize your folders as shown below.
     python detect.py --augment
 
 
+![IMG_5359](https://github.com/jiminc77/Shelf_Detector/assets/91927189/f5e0a5ff-8e93-4607-aefe-b379cd833ab7)
+
+
