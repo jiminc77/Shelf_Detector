@@ -60,5 +60,6 @@ After cloning, organize your folders as shown below.
 
 
 ![IMG_5359](https://github.com/jiminc77/Shelf_Detector/assets/91927189/f5e0a5ff-8e93-4607-aefe-b379cd833ab7)
+![IMG_5393](https://github.com/jiminc77/Shelf_Detector/assets/91927189/ba39a2b6-a505-4540-8207-d8ed9b46c593)
 
 
