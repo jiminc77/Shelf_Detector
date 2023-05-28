@@ -86,8 +86,8 @@ def run(
 
     # Load model
     device = select_device(device)
-    model1 = DetectMultiBackend(["Weights/ItemDetect.pt"], device=device, dnn=dnn, data='ItemDetect.yaml', fp16=half)
-    model2 = DetectMultiBackend(["Weights/EmptyDetect.pt"], device=device, dnn=dnn, data='EmptyDetect.yaml', fp16=half)
+    model1 = DetectMultiBackend(["Weights/ItemDetect.engine"], device=device, dnn=dnn, data='ItemDetect.yaml', fp16=half)
+    model2 = DetectMultiBackend(["Weights/EmptyDetect.engine"], device=device, dnn=dnn, data='EmptyDetect.yaml', fp16=half)
 
     assert model1.stride == model2.stride
 
