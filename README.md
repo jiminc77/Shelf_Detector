@@ -15,8 +15,8 @@ After cloning, organize your folders as shown below
         ├── Inputs
         ├── Outputs
         ├── Weights
-        │   ├── ItemDetect.pt
-        │   └── EmptyDetect.pt
+        │   ├── ItemDetect.engine
+        │   └── EmptyDetect.engine
         ├── models
         ├── utils
         ├── data
