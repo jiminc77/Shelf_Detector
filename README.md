@@ -19,11 +19,11 @@ After cloning and downloading dataset, organize your folders as shown below
         ├── Weights
         │   ├── ItemDetect.engine
         │   └── EmptyDetect.engine
+        ├── yolov5x6.pt
         ├── models
         ├── utils
         ├── data
         ├── train.py
-        ├── yolov5x6.pt
         └── detect.py
 
 
