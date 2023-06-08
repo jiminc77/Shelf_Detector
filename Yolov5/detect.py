@@ -180,7 +180,7 @@ def run(
                                 f.write(('%g ' * len(line)).rstrip() % line + '\n')
                         if save_img or save_crop or view_img:  # Add bbox to image
                             c = int(cls)  # integer class
-                            annotator_1.box_label(xyxy, '', color=(255, 0, 0))  # blue bbox for model1
+                            annotator_1.box_label(xyxy, '', color=(255, 255, 0))  # blue bbox for model1
                         if save_crop:
                             save_one_box(xyxy, imc, file=save_dir / 'crops' / names_1[c] / f'{p.stem}.jpg', BGR=True)
 
@@ -193,7 +193,7 @@ def run(
                                 f.write(('%g ' * len(line)).rstrip() % line + '\n')
                         if save_img or save_crop or view_img:  # Add bbox to image
                             c = int(cls)  # integer class
-                            annotator_2.box_label(xyxy, '', color=(0, 255, 0))  # green bbox for model2
+                            annotator_2.box_label(xyxy, '', color=(255, 0, 255))  # green bbox for model2
                         if save_crop:
                             save_one_box(xyxy, imc, file=save_dir / 'crops' / names_2[c] / f'{p.stem}.jpg', BGR=True)
 
@@ -260,7 +260,7 @@ def parse_opt():
     parser.add_argument('--project', default=ROOT / 'Outputs', help='save results to project/name')
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
-    parser.add_argument('--line-thickness', default=3, type=int, help='bounding box thickness (pixels)')
+    parser.add_argument('--line-thickness', default=6, type=int, help='bounding box thickness (pixels)')
     parser.add_argument('--hide-labels', default=True, action='store_true', help='hide labels')
     parser.add_argument('--hide-conf', default=False, action='store_true', help='hide confidences')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
