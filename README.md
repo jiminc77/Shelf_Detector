@@ -1,7 +1,9 @@
 # Shelf_Detector
 > Folder Structure <br/>
 
-After cloning, organize your folders as shown below
+After cloning and downloading dataset, organize your folders as shown below
+
+[ Dataset Download Here ](https://drive.google.com/drive/folders/1J3qiaXRBaDmvXN9wDjf3LoHP9t09bMfL?usp=sharing, "Dataset and pt File")
 
     ├── Empty_Dataset
     │   ├── train
@@ -25,7 +27,6 @@ After cloning, organize your folders as shown below
 
 
 
-[ File Download Here ](https://drive.google.com/drive/folders/1J3qiaXRBaDmvXN9wDjf3LoHP9t09bMfL?usp=sharing, "Dataset and pt File")
 
 <br/>
 
@@ -40,12 +41,12 @@ After cloning, organize your folders as shown below
 Install
 
     git clone https://github.com/jiminc77/Shelf_Detector.git  # clone
-    cd yolov5
+    cd Shelf_Detector/Yolov5
     pip install -r requirements.txt  # install
 
 Training
 
-    python python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <data>.yaml --cfg yolov5x6.yaml --weights <pretrained model> --device <device>
+    python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <ItemDetect or EmptyDetect>.yaml --cfg yolov5x6.yaml --weights <pretrained model> --device <device>
     
 - Optimizer : SGD
 - Loss : Box Loss, Objectness Loss, Classification Loss
