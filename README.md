@@ -40,7 +40,7 @@ After cloning, organize your folders as shown below
 Install
 
     git clone https://github.com/jiminc77/Shelf_Detector.git  # clone
-    cd yolov5
+    cd Shelf_Detector/Yolov5
     pip install -r requirements.txt  # install
 
 Training
