@@ -19,6 +19,7 @@ After cloning and downloading dataset, organize your folders as shown below
         ├── Weights
         │   ├── ItemDetect.engine
         │   └── EmptyDetect.engine
+        ├── yolov5x6.pt
         ├── models
         ├── utils
         ├── data
@@ -46,7 +47,7 @@ Install
 
 Training
 
-    python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <ItemDetect or EmptyDetect>.yaml --cfg yolov5x6.yaml --weights <pretrained model> --device <device>
+    python train.py --img 640 --batch <batch_size> --epochs <epoch> --data <ItemDetect or EmptyDetect>.yaml --cfg yolov5x6.yaml --weights <yolov5x6.pt> --device <device>
     
 - Optimizer : SGD
 - Loss : Box Loss, Objectness Loss, Classification Loss
