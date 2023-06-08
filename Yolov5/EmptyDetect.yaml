@@ -4,3 +4,4 @@ test: ../Empty_Dataset/test/images
 
 nc: 1  # number of classes
 names: ['empty']  # replace with your class names
+  
