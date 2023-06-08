@@ -23,6 +23,7 @@ After cloning and downloading dataset, organize your folders as shown below
         ├── utils
         ├── data
         ├── train.py
+        ├── yolov5x6.pt
         └── detect.py
 
 
