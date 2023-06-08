@@ -1,7 +1,8 @@
 # Shelf_Detector
 > Folder Structure <br/>
 
-After cloning, organize your folders as shown below
+After cloning and downloading dataset, organize your folders as shown below
+[ Dataset Download Here ](https://drive.google.com/drive/folders/1J3qiaXRBaDmvXN9wDjf3LoHP9t09bMfL?usp=sharing, "Dataset and pt File")
 
     ├── Empty_Dataset
     │   ├── train
@@ -25,7 +26,6 @@ After cloning, organize your folders as shown below
 
 
 
-[ Dataset Download Here ](https://drive.google.com/drive/folders/1J3qiaXRBaDmvXN9wDjf3LoHP9t09bMfL?usp=sharing, "Dataset and pt File")
 
 <br/>
 
